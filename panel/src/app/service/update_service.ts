@@ -5,6 +5,7 @@ import { GlobalVariable } from "mcsmanager-common";
 import path from "path";
 import { v4 } from "uuid";
 import { systemConfig } from "../setting";
+import { downloadUpdatePackage } from "./update_download";
 import { logger } from "./log";
 
 const DEFAULT_RELEASE_API = "https://api.github.com/repos/zerogzy/MCSManager/releases/latest";
@@ -188,34 +189,23 @@ class PanelUpdateService {
       body: data.body || "",
       assetName: asset.name,
       assetSize: Number(asset.size || 0),
-      downloadUrl: asset.browser_download_url
+      downloadUrl: this.resolveDownloadUrl(asset.browser_download_url)
     };
   }
 
   private async download(url: string, targetPath: string, expectedSize: number) {
     this.updateStatus("downloading", 5, "正在下载更新包");
-    await fs.ensureDir(path.dirname(targetPath));
-    const response = await axios.get(url, {
-      responseType: "stream",
-      timeout: 30000,
-      headers: { "User-Agent": "MCSManager-Update" }
+    this.log("info", `下载地址：${url}`);
+    await downloadUpdatePackage(url, targetPath, expectedSize, {
+      setTotal: (total) => {
+        this.task.totalBytes = total;
+      },
+      setProgress: (downloaded, total) => {
+        this.task.downloadedBytes = downloaded;
+        if (total > 0) this.task.progress = Math.min(45, Math.floor((downloaded / total) * 40) + 5);
+      },
+      logWarn: (message) => this.log("warn", message)
     });
-    const total = Number(response.headers["content-length"] || expectedSize || 0);
-    this.task.totalBytes = total;
-    let downloaded = 0;
-    const writer = fs.createWriteStream(targetPath);
-    response.data.on("data", (chunk: Buffer) => {
-      downloaded += chunk.length;
-      this.task.downloadedBytes = downloaded;
-      if (total > 0) this.task.progress = Math.min(45, Math.floor((downloaded / total) * 40) + 5);
-    });
-    response.data.pipe(writer);
-    await new Promise<void>((resolve, reject) => {
-      writer.on("finish", resolve);
-      writer.on("error", reject);
-      response.data.on("error", reject);
-    });
-    if (total > 0 && downloaded !== total) throw new Error("更新包下载不完整，请重试");
   }
 
   private async extractPackage(packagePath: string, extractDir: string) {
@@ -345,6 +335,24 @@ class PanelUpdateService {
 
   private getReleaseApiUrl() {
     return systemConfig?.updateReleaseApiUrl || DEFAULT_RELEASE_API;
+  }
+
+  private resolveDownloadUrl(downloadUrl: string) {
+    const proxyUrl = systemConfig?.updateDownloadProxyUrl?.trim();
+    if (!proxyUrl) return downloadUrl;
+    const url = new URL(downloadUrl);
+    const urlNoProtocol = `${url.protocol.replace(":", "")}/${url.host}${url.pathname}${url.search}`;
+    if (proxyUrl.includes("{urlEncoded}")) {
+      return proxyUrl.split("{urlEncoded}").join(encodeURIComponent(downloadUrl));
+    }
+    if (proxyUrl.includes("{urlNoProtocol}")) {
+      return proxyUrl.split("{urlNoProtocol}").join(urlNoProtocol);
+    }
+    if (proxyUrl.includes("{url}")) {
+      return proxyUrl.split("{url}").join(downloadUrl);
+    }
+    const normalizedProxy = proxyUrl.endsWith("/") ? proxyUrl : `${proxyUrl}/`;
+    return `${normalizedProxy}${urlNoProtocol}`;
   }
 
   private getRootDir() {

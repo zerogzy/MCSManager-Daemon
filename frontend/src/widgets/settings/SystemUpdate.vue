@@ -132,6 +132,19 @@ onUnmounted(stopPolling);
     </a-form-item>
 
     <a-form-item>
+      <a-typography-title :level="5">更新包下载代理前缀</a-typography-title>
+      <a-typography-paragraph type="secondary">
+        可选。填写后会把 Release 资产下载地址改写到该镜像前缀，避免检查更新走镜像但实际下载仍直连 GitHub。
+        例如：<code>https://web.zerogzy.net/web/</code> 会下载 <code>https://web.zerogzy.net/web/https/github.com/...</code>。
+      </a-typography-paragraph>
+      <a-input
+        v-model:value="formData.updateDownloadProxyUrl"
+        placeholder="留空则直接使用 Release API 返回的下载地址"
+        style="max-width: 640px"
+      />
+    </a-form-item>
+
+    <a-form-item>
       <a-typography-title :level="5">服务重启命令</a-typography-title>
       <a-typography-paragraph type="secondary">
         更新替换完成后执行的命令。默认适用于 systemd 部署方式。
@@ -189,6 +202,11 @@ onUnmounted(stopPolling);
         </a-descriptions-item>
         <a-descriptions-item label="Release 页面">
           <a :href="updateInfo.releaseUrl" target="_blank" rel="noopener">查看详情</a>
+        </a-descriptions-item>
+        <a-descriptions-item label="下载地址" :span="2">
+          <a :href="updateInfo.downloadUrl" target="_blank" rel="noopener">
+            {{ updateInfo.downloadUrl }}
+          </a>
         </a-descriptions-item>
       </a-descriptions>
     </div>

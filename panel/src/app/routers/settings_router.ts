@@ -80,6 +80,17 @@ router.put("/setting", permission({ level: ROLE.ADMIN }), async (ctx) => {
       }
       systemConfig.updateReleaseApiUrl = updateReleaseApiUrl;
     }
+    if (config.updateDownloadProxyUrl != null) {
+      const updateDownloadProxyUrl = String(config.updateDownloadProxyUrl).trim();
+      if (
+        updateDownloadProxyUrl &&
+        !updateDownloadProxyUrl.startsWith("https://") &&
+        !updateDownloadProxyUrl.startsWith("http://")
+      ) {
+        throw new Error("Update download proxy URL must use http(s) protocol");
+      }
+      systemConfig.updateDownloadProxyUrl = updateDownloadProxyUrl;
+    }
     if (config.updateServiceRestartCommand != null) {
       systemConfig.updateServiceRestartCommand = String(config.updateServiceRestartCommand);
     }

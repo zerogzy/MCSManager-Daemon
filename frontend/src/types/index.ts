@@ -87,6 +87,7 @@ export interface Settings {
   language: string;
   presetPackAddr: string;
   updateReleaseApiUrl: string;
+  updateDownloadProxyUrl: string;
   updateServiceRestartCommand: string;
   updateAllowPrerelease: boolean;
   redisUrl: string;

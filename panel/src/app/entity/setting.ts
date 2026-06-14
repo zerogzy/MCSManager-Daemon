@@ -56,6 +56,9 @@ export default class SystemConfig {
   // 面板自动更新使用的 Release API 地址
   updateReleaseApiUrl = "https://api.github.com/repos/zerogzy/MCSManager/releases/latest";
 
+  // 更新包下载代理前缀，用于将 Release asset 下载地址改写到镜像站
+  updateDownloadProxyUrl = "";
+
   // 替换更新文件后执行的服务重启命令
   updateServiceRestartCommand = "systemctl restart mcsm-web mcsm-daemon";
 
