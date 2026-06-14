@@ -22,6 +22,7 @@ export enum OperationLoggerAction {
   UserConfigChange = "user_config_change",
   UserLogin = "user_login",
   SsoUnbind = "sso_unbind",
+  ShopPriceChange = "shop_price_change",
   SystemConfigChange = "system_config_change"
 }
 
@@ -147,6 +148,13 @@ export type SsoUnbindOptions = {
   target_user_name: string;
 } & GlobalGeneralOptions;
 
+export type ShopPriceChangeOptions = {
+  type: "shop_price_change";
+  target_daemon: string;
+  target_instance: string;
+  new_price: number;
+} & GlobalGeneralOptions;
+
 export type SystemConfigChangeOptions = {
   type: "system_config_change";
 } & GlobalGeneralOptions;
@@ -175,6 +183,7 @@ export type OperationLoggerItem =
   | UserConfigChangeOptions
   | UserLoginOptions
   | SsoUnbindOptions
+  | ShopPriceChangeOptions
   | SystemConfigChangeOptions;
 
 export type OperationLoggerItemPayload = {

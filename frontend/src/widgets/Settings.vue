@@ -21,6 +21,7 @@ import {
   EditOutlined,
   GithubOutlined,
   LockOutlined,
+  PayCircleOutlined,
   MessageOutlined,
   MoneyCollectOutlined,
   PicLeftOutlined,
@@ -128,6 +129,11 @@ const menus = arrayFilter([
     title: t("TXT_CODE_SSO_TAB_TITLE"),
     key: "sso",
     icon: ApiOutlined
+  },
+  {
+    title: t("TXT_CODE_SHOP_PAYMENT_SETTINGS"),
+    key: "payment",
+    icon: PayCircleOutlined
   },
   {
     title: t("TXT_CODE_46cb40d5"),
@@ -1171,6 +1177,83 @@ onUnmounted(() => {
 
           <template #pro>
             <IframeBox :src="getProPanelUrl('/status')" :height="card.height" />
+          </template>
+
+          <template #payment>
+            <div class="content-box" :style="{ maxHeight: card.height }">
+              <a-typography-title :level="4" class="mb-24">
+                {{ t("TXT_CODE_SHOP_PAYMENT_SETTINGS") }}
+              </a-typography-title>
+              <div style="text-align: left">
+                <a-form :model="formData" layout="vertical">
+                  <a-form-item>
+                    <a-typography-title :level="5">APP ID</a-typography-title>
+                    <a-typography-paragraph type="secondary">
+                      {{ t("TXT_CODE_SHOP_PAY_APPID_DESC") }}
+                    </a-typography-paragraph>
+                    <a-input
+                      v-model:value="(formData as any).payAppId"
+                      style="max-width: 480px"
+                      placeholder="虎皮椒 APP ID"
+                    />
+                  </a-form-item>
+
+                  <a-form-item>
+                    <a-typography-title :level="5">APP Secret</a-typography-title>
+                    <a-typography-paragraph type="secondary">
+                      {{ t("TXT_CODE_SHOP_PAY_SECRET_DESC") }}
+                    </a-typography-paragraph>
+                    <a-input-password
+                      v-model:value="(formData as any).payAppSecret"
+                      style="max-width: 480px"
+                      placeholder="虎皮椒密钥"
+                    />
+                  </a-form-item>
+
+                  <a-form-item>
+                    <a-typography-title :level="5">{{ t("TXT_CODE_SHOP_PAY_GATEWAY_URL") }}</a-typography-title>
+                    <a-typography-paragraph type="secondary">
+                      {{ t("TXT_CODE_SHOP_PAY_GATEWAY_URL_DESC") }}
+                    </a-typography-paragraph>
+                    <a-input
+                      v-model:value="(formData as any).payGatewayUrl"
+                      style="max-width: 480px"
+                      placeholder="https://api.xunhupay.com/payment/do.html"
+                    />
+                  </a-form-item>
+
+                  <a-form-item>
+                    <a-typography-title :level="5">{{ t("TXT_CODE_SHOP_PAY_BACKUP_URL") }}</a-typography-title>
+                    <a-typography-paragraph type="secondary">
+                      {{ t("TXT_CODE_SHOP_PAY_BACKUP_URL_DESC") }}
+                    </a-typography-paragraph>
+                    <a-input
+                      v-model:value="(formData as any).payBackupUrl"
+                      style="max-width: 480px"
+                      placeholder="https://api.dpweixin.com/payment/do.html"
+                    />
+                  </a-form-item>
+
+                  <a-form-item>
+                    <a-typography-title :level="5">{{ t("TXT_CODE_SHOP_PAY_NOTIFY_URL") }}</a-typography-title>
+                    <a-typography-paragraph type="secondary">
+                      {{ t("TXT_CODE_SHOP_PAY_NOTIFY_URL_DESC") }}
+                    </a-typography-paragraph>
+                    <a-input
+                      v-model:value="(formData as any).payNotifyUrl"
+                      style="max-width: 480px"
+                      placeholder="https://your-domain.com/api/shop/notify"
+                    />
+                  </a-form-item>
+
+                  <div class="button">
+                    <a-button type="primary" :loading="submitIsLoading" @click="submit()">
+                      {{ t("TXT_CODE_abfe9512") }}
+                    </a-button>
+                  </div>
+                </a-form>
+              </div>
+            </div>
           </template>
 
           <template #redeem>

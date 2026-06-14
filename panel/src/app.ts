@@ -21,6 +21,7 @@ import { logger } from "./app/service/log";
 import SystemRemoteService from "./app/service/remote_service";
 import SystemUser from "./app/service/user_service";
 import versionAdapter from "./app/service/version_adapter";
+import { initShopDatabase, closeShopDatabase } from "./app/service/shop_database";
 import { initSystemConfig, systemConfig } from "./app/setting";
 import { checkBusinessMode, getVersion, initVersionManager } from "./app/version";
 
@@ -124,6 +125,9 @@ _  /  / / / /___  ____/ /_  /  / / / /_/ /_  / / / /_/ /_  /_/ //  __/  /
   // Initialize services
   await SystemUser.initialize();
   await SystemRemoteService.initialize();
+
+  // 初始化商城数据库
+  await initShopDatabase();
 
   const app = new Koa({
     proxy: systemConfig?.reverseProxyMode || false,

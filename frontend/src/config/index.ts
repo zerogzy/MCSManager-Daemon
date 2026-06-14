@@ -39,6 +39,8 @@ import Settings from "@/widgets/Settings.vue";
 import McPreset from "@/widgets/setupApp/McPreset.vue";
 import QuickStartFlow from "@/widgets/setupApp/QuickStartFlow.vue";
 import ShelvesCard from "@/widgets/ShelvesCard.vue";
+import ShopCard from "@/widgets/ShopCard.vue";
+import ShopAdminCard from "@/widgets/ShopAdminCard.vue";
 import StatusBlock from "@/widgets/StatusBlock.vue";
 import TitleCard from "@/widgets/TitleCard.vue";
 import UserAccessSettings from "@/widgets/user/AccessSettings.vue";
@@ -93,6 +95,8 @@ export const LAYOUT_CARD_TYPES: { [key: string]: any } = {
   PluginCard,
   MusicCard,
   ShelvesCard,
+  ShopCard,
+  ShopAdminCard,
   OperationLogCard,
   Market,
   MarketEditor
@@ -520,13 +524,24 @@ export function getLayoutCardPool() {
     },
     {
       id: getRandomId(),
-      permission: ROLE.GUEST,
+      permission: ROLE.USER,
       meta: {},
-      type: "ShelvesCard",
-      title: t("TXT_CODE_b99cae18"),
+      type: "ShopCard",
+      title: t("TXT_CODE_5a408a5e"),
       width: 8,
-      description: t("TXT_CODE_163e2d0a"),
-      height: LayoutCardHeight.MEDIUM,
+      description: t("TXT_CODE_5a408a5e"),
+      height: LayoutCardHeight.LARGE,
+      category: NEW_CARD_TYPE.COMMON
+    },
+    {
+      id: getRandomId(),
+      permission: ROLE.ADMIN,
+      meta: {},
+      type: "ShopAdminCard",
+      title: t("TXT_CODE_SHOP_ADMIN_USERS"),
+      width: 8,
+      description: t("TXT_CODE_SHOP_ADMIN_USERS"),
+      height: LayoutCardHeight.LARGE,
       category: NEW_CARD_TYPE.COMMON
     },
     {

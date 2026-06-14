@@ -89,6 +89,15 @@ export default class SystemConfig {
   ssoClientSecret = "";
   ssoCallbackUrl = "";
 
+  // -----
+  // 商城 / 支付配置（虎皮椒）
+  payAppId = "";
+  payAppSecret = "";
+  payGatewayUrl = "https://api.xunhupay.com/payment/do.html";
+  payBackupUrl = "https://api.dpweixin.com/payment/do.html";
+  payNotifyUrl = "";
+  // -----
+
   // Whether to enable SSL/TLS (HTTPS)
   ssl = false;
   // SSL certificate file path (.pem)

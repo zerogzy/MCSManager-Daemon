@@ -321,12 +321,8 @@ const originRouterConfig: RouterConfig[] = [
     name: t("TXT_CODE_5a408a5e"),
     component: LayoutContainer,
     meta: {
-      permission: ROLE.GUEST,
-      mainMenu: true,
-      condition: () => {
-        const { state: appConfig } = useAppStateStore();
-        return appConfig.settings.businessMode;
-      }
+      permission: ROLE.USER,
+      mainMenu: true
     }
   }
 ];

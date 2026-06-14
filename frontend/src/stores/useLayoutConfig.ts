@@ -1,9 +1,15 @@
 import { getAllLayoutConfig, setAllLayoutConfig } from "@/config/originLayoutConfig";
 import { useRouterParams } from "@/hooks/useRouterParams";
+import { useAppStateStore } from "@/stores/useAppStateStore";
 import { resetLayoutConfig, setLayoutConfig } from "@/services/apis/layout";
 import type { LayoutCard, LayoutWithRouter } from "@/types";
 import { createGlobalState } from "@vueuse/core";
 import { ref } from "vue";
+
+// 仅管理员可见的卡片
+const ADMIN_ONLY_CARDS = ["ShopAdminCard"];
+// 管理员使用管理版商城卡片，不显示普通用户商城卡片
+const USER_ONLY_CARDS = ["ShopCard"];
 
 export const useLayoutConfigStore = createGlobalState(() => {
   const { currentRoutePath } = useRouterParams();
@@ -12,7 +18,13 @@ export const useLayoutConfigStore = createGlobalState(() => {
   const getPageLayoutConfig = (pageName: string) => {
     if (!pageName) pageName = currentRoutePath.value;
     const res = globalLayoutConfig.value.find((item) => item.page === pageName)?.items;
-    return res ? res : [];
+    if (!res) return [];
+
+    const { isAdmin } = useAppStateStore();
+    if (!isAdmin.value) {
+      return res.filter((item) => !ADMIN_ONLY_CARDS.includes(item.type));
+    }
+    return res.filter((item) => !USER_ONLY_CARDS.includes(item.type));
   };
 
   const deleteLayoutItem = (pageName: string, id: string) => {

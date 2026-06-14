@@ -102,6 +102,12 @@ export interface Settings {
   ssoClientId: string;
   ssoClientSecret: string;
   ssoCallbackUrl: string;
+  // 商城 / 支付配置
+  payAppId: string;
+  payAppSecret: string;
+  payGatewayUrl: string;
+  payBackupUrl: string;
+  payNotifyUrl: string;
 }
 
 export interface ImageInfo {

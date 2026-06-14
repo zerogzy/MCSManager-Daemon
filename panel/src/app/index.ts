@@ -1,6 +1,7 @@
 import Router from "@koa/router";
 import Koa from "koa";
 
+import { logger } from "./service/log";
 import "./service/remote_service";
 import "./service/user_service";
 import "./service/user_statistics";
@@ -22,6 +23,10 @@ import scheduleRouter from "./routers/schedule_router";
 import settingsRouter from "./routers/settings_router";
 import ssoRouter from "./routers/sso_router";
 import userRouter from "./routers/user_overview_router";
+import shopUserRouter from "./routers/shop_user_router";
+import shopAdminRouter from "./routers/shop_admin_router";
+import shopOrderService from "./service/shop_order_service";
+import { retryPendingRenewals } from "./service/shop_payment_service";
 
 export function mountRouters(app: Koa<Koa.DefaultState, Koa.DefaultContext>) {
   const apiRouter = new Router({ prefix: "/api" });
@@ -41,6 +46,32 @@ export function mountRouters(app: Koa<Koa.DefaultState, Koa.DefaultContext>) {
   apiRouter.use(exchangeRouter.routes()).use(exchangeRouter.allowedMethods());
   apiRouter.use(javaManagerRouter.routes()).use(javaManagerRouter.allowedMethods());
   apiRouter.use(modManagerRouter.routes()).use(modManagerRouter.allowedMethods());
+  apiRouter.use(shopUserRouter.routes()).use(shopUserRouter.allowedMethods());
+  apiRouter.use(shopAdminRouter.routes()).use(shopAdminRouter.allowedMethods());
 
   app.use(apiRouter.routes()).use(apiRouter.allowedMethods());
+
+  // 启动过期订单清理任务（每 10 分钟删除过期未支付订单）
+  setInterval(() => {
+    try {
+      const count = shopOrderService.deleteExpiredOrders();
+      if (count > 0) {
+        logger.info(`[Shop] Deleted ${count} expired unpaid order(s).`);
+      }
+    } catch (err) {
+      logger.error("[Shop] Failed to clean expired orders:", err);
+    }
+  }, 10 * 60 * 1000);
+
+  // 启动待续费订单重试任务（每 5 分钟）
+  setInterval(async () => {
+    try {
+      const count = await retryPendingRenewals();
+      if (count > 0) {
+        logger.info(`[Shop] Retried ${count} pending renewal(s).`);
+      }
+    } catch (err) {
+      logger.error("[Shop] Failed to retry pending renewals:", err);
+    }
+  }, 5 * 60 * 1000);
 }

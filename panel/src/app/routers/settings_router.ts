@@ -174,6 +174,19 @@ router.put("/setting", permission({ level: ROLE.ADMIN }), async (ctx) => {
       systemConfig.ssoCallbackUrl = cbUrl;
     }
 
+    // 商城 / 支付配置
+    if (config.payAppId != null) systemConfig.payAppId = String(config.payAppId);
+    if (config.payAppSecret != null) systemConfig.payAppSecret = String(config.payAppSecret);
+    if (config.payGatewayUrl != null) systemConfig.payGatewayUrl = String(config.payGatewayUrl);
+    if (config.payBackupUrl != null) systemConfig.payBackupUrl = String(config.payBackupUrl);
+    if (config.payNotifyUrl != null) {
+      const notifyUrl = String(config.payNotifyUrl);
+      if (notifyUrl && !notifyUrl.startsWith("https://") && !notifyUrl.startsWith("http://")) {
+        throw new Error("Payment notify URL must use http(s) protocol");
+      }
+      systemConfig.payNotifyUrl = notifyUrl;
+    }
+
     operationLogger.log("system_config_change", {
       operator_ip: ctx.ip,
       operator_name: ctx.session?.["userName"]

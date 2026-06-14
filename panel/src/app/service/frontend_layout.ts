@@ -613,11 +613,19 @@ function getDefaultFrontendLayoutConfig(): IPageLayoutConfig[] {
         {
           id: getRandomId(),
           meta: {},
-          type: "ShelvesCard",
-          title: t("TXT_CODE_381f8f22"),
+          type: "ShopCard",
+          title: t("TXT_CODE_5a408a5e"),
           width: 12,
           height: LayoutCardHeight.LARGE,
           disableDelete: true
+        },
+        {
+          id: getRandomId(),
+          meta: {},
+          type: "ShopAdminCard",
+          title: t("TXT_CODE_SHOP_ADMIN_USERS"),
+          width: 12,
+          height: LayoutCardHeight.LARGE
         }
       ]
     },
