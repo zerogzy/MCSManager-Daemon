@@ -344,9 +344,9 @@ onUnmounted(stopPolling);
 
 .latest-version-cell {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
 }
 
 .version-tag { margin-left: 0; }
